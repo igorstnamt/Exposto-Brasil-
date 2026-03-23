@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cardápio do Engano</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style> body { font-family: system-ui; } </style>
+</head>
+<body class="bg-gray-100 p-8">
+  <h1 class="text-4xl font-bold text-red-600 text-center mb-8">🍽️ Cardápio do Engano</h1>
+  <p class="text-center mb-10">Você paga preço de produto superior… e leva baixa qualidade desde 2000.</p>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+    <!-- Card 1: Chocolate -->
+    <div class="bg-white rounded-xl shadow-lg p-6">
+      <img src="https://via.placeholder.com/300x200?text=Chocolate+Antes+×+Depois" class="w-full rounded-lg mb-4">
+      <h2 class="text-2xl font-bold">Chocolate em Barra</h2>
+      <p class="text-red-500 font-bold">2000–2026: de 180g → 80g | Cacau ↓ mas preço ↑ 25%</p>
+      <canvas id="graficoChocolate" class="mt-4"></canvas>
+      <p class="mt-4 text-sm">Prejuízo: +35% por grama. Cacau caiu em 2026, chocolate continua caro.</p>
+    </div>
+
+    <!-- Card 2: Bono -->
+    <div class="bg-white rounded-xl shadow-lg p-6">
+      <img src="https://via.placeholder.com/300x200?text=Bono+140g+→+90g" class="w-full rounded-lg mb-4">
+      <h2 class="text-2xl font-bold">Biscoito Bono</h2>
+      <p class="text-red-500 font-bold">De 140g → 90g (duas reduções)</p>
+      <p class="mt-4 text-sm">Embalagem igual, preço igual, menos produto.</p>
+    </div>
+
+    <!-- Card 3: Ovos -->
+    <div class="bg-white rounded-xl shadow-lg p-6">
+      <img src="https://via.placeholder.com/300x200?text=Ovos+12+→+10" class="w-full rounded-lg mb-4">
+      <h2 class="text-2xl font-bold">Caixa de Ovos</h2>
+      <p class="text-red-500 font-bold">12 unidades → 10 (–16,7%)</p>
+      <p class="mt-4 text-sm">“Dúzia de dez” virou padrão no Brasil.</p>
+    </div>
+  </div>
+
+  <script>
+    // Gráfico exemplo cacau vs chocolate
+    new Chart(document.getElementById('graficoChocolate'), {
+      type: 'line',
+      data: { labels: ['2022','2023','2024','2025','2026'], 
+              datasets: [{ label: 'Cacau (US$/ton)', data: [2500,3000,8000,12000,4000], borderColor: 'green' },
+                         { label: 'Chocolate Brasil (índice)', data: [100,110,130,155,160], borderColor: 'red' }] },
+      options: { responsive: true }
+    });
+  </script>
+</body>
+</html>
