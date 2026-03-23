@@ -2,51 +2,89 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cardápio do Engano</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style> body { font-family: system-ui; } </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>body{font-family:'Inter',sans-serif;}</style>
 </head>
-<body class="bg-gray-100 p-8">
-  <h1 class="text-4xl font-bold text-red-600 text-center mb-8">🍽️ Cardápio do Engano</h1>
-  <p class="text-center mb-10">Você paga preço de produto superior… e leva baixa qualidade desde 2000.</p>
+<body class="bg-gray-50">
+  <header class="bg-white shadow sticky top-0 z-10">
+    <div class="max-w-4xl mx-auto px-4 py-6 flex items-center justify-between">
+      <h1 class="text-5xl font-bold text-red-600">Cardápio do Engano</h1>
+      <div class="text-right">
+        <span class="text-sm italic text-gray-400 opacity-40">created by</span><br>
+        <span class="text-xl font-bold text-red-600">Exposto Brasil</span>
+      </div>
+    </div>
+  </header>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-    <!-- Card 1: Chocolate -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
-      <img src="https://via.placeholder.com/300x200?text=Chocolate+Antes+×+Depois" class="w-full rounded-lg mb-4">
-      <h2 class="text-2xl font-bold">Chocolate em Barra</h2>
-      <p class="text-red-500 font-bold">2000–2026: de 180g → 80g | Cacau ↓ mas preço ↑ 25%</p>
-      <canvas id="graficoChocolate" class="mt-4"></canvas>
-      <p class="mt-4 text-sm">Prejuízo: +35% por grama. Cacau caiu em 2026, chocolate continua caro.</p>
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="mb-8">
+      <label class="block text-sm font-medium mb-2">Filtrar por período de alteração:</label>
+      <select id="filtro" onchange="filtrar()" class="w-full p-4 border border-gray-300 rounded-xl text-lg">
+        <option value="todos">2000-2026 (Todos)</option>
+        <option value="2015">2015-2026</option>
+        <option value="2020">2020-2026 (Pós-pandemia)</option>
+        <option value="2024">2024-2026</option>
+      </select>
     </div>
 
-    <!-- Card 2: Bono -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
-      <img src="https://via.placeholder.com/300x200?text=Bono+140g+→+90g" class="w-full rounded-lg mb-4">
-      <h2 class="text-2xl font-bold">Biscoito Bono</h2>
-      <p class="text-red-500 font-bold">De 140g → 90g (duas reduções)</p>
-      <p class="mt-4 text-sm">Embalagem igual, preço igual, menos produto.</p>
-    </div>
-
-    <!-- Card 3: Ovos -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
-      <img src="https://via.placeholder.com/300x200?text=Ovos+12+→+10" class="w-full rounded-lg mb-4">
-      <h2 class="text-2xl font-bold">Caixa de Ovos</h2>
-      <p class="text-red-500 font-bold">12 unidades → 10 (–16,7%)</p>
-      <p class="mt-4 text-sm">“Dúzia de dez” virou padrão no Brasil.</p>
+    <div id="lista-produtos" class="space-y-6">
+      <!-- Os 20 cards são gerados pelo JS abaixo -->
     </div>
   </div>
 
   <script>
-    // Gráfico exemplo cacau vs chocolate
-    new Chart(document.getElementById('graficoChocolate'), {
-      type: 'line',
-      data: { labels: ['2022','2023','2024','2025','2026'], 
-              datasets: [{ label: 'Cacau (US$/ton)', data: [2500,3000,8000,12000,4000], borderColor: 'green' },
-                         { label: 'Chocolate Brasil (índice)', data: [100,110,130,155,160], borderColor: 'red' }] },
-      options: { responsive: true }
-    });
+    const produtos = [
+      {id:1,nome:"Chocolate em Barra Lacta/Nestlé",aumento:"↑ 250%",periodo:"2020",alterada:true},
+      {id:2,nome:"Bis Lacta",aumento:"↑ 180%",periodo:"2020",alterada:true},
+      {id:3,nome:"Biscoito Bono Nestlé",aumento:"↑ 160%",periodo:"2020",alterada:true},
+      {id:4,nome:"Caixa de Ovos (12→10)",aumento:"↑ 120%",periodo:"2020",alterada:false},
+      {id:5,nome:"Sabão em Pó OMO",aumento:"↑ 85%",periodo:"2015",alterada:true},
+      {id:6,nome:"Suco em Pó Tang/Mid",aumento:"↑ 140%",periodo:"2020",alterada:true},
+      {id:7,nome:"Achocolatado Nescau",aumento:"↑ 95%",periodo:"2020",alterada:true},
+      {id:8,nome:"Biscoito Wafer Piraquê",aumento:"↑ 220%",periodo:"2015",alterada:true},
+      {id:9,nome:"Molho de Tomate Heinz",aumento:"↑ 75%",periodo:"2020",alterada:true},
+      {id:10,nome:"Caixa de Fósforos Fiat Lux",aumento:"↑ 65%",periodo:"2015",alterada:false},
+      {id:11,nome:"Sabonete Lux/Ypê",aumento:"↑ 90%",periodo:"2020",alterada:true},
+      {id:12,nome:"Detergente Líquido Ypê",aumento:"↑ 80%",periodo:"2020",alterada:false},
+      {id:13,nome:"Iogurte Danone",aumento:"↑ 110%",periodo:"2020",alterada:true},
+      {id:14,nome:"Creme Dental Colgate",aumento:"↑ 70%",periodo:"2015",alterada:false},
+      {id:15,nome:"Shampoo Pantene",aumento:"↑ 85%",periodo:"2020",alterada:true},
+      {id:16,nome:"Arroz Tio João",aumento:"↑ 55%",periodo:"2024",alterada:false},
+      {id:17,nome:"Leite Condensado Moça",aumento:"↑ 130%",periodo:"2020",alterada:true},
+      {id:18,nome:"Macarrão Instantâneo Nissin",aumento:"↑ 100%",periodo:"2020",alterada:false},
+      {id:19,nome:"Pão de Forma Pullman",aumento:"↑ 95%",periodo:"2020",alterada:true},
+      {id:20,nome:"Salgadinho Torcida/Ruffles",aumento:"↑ 150%",periodo:"2020",alterada:true}
+    ];
+
+    function renderizar(produtosFiltrados) {
+      const container = document.getElementById('lista-produtos');
+      container.innerHTML = produtosFiltrados.map(p => `
+        <div class="bg-white rounded-2xl shadow p-6 flex gap-6">
+          <img src="https://picsum.photos/id/${p.id}/120/120" class="w-28 h-28 object-cover rounded-xl">
+          <div class="flex-1">
+            <div class="flex justify-between items-start">
+              <h3 class="text-xl font-bold">${p.nome}</h3>
+              ${p.alterada ? `<span class="bg-red-600 text-white text-xs px-4 py-1 rounded-full font-bold">FÓRMULA ALTERADA</span>` : ''}
+            </div>
+            <p class="text-red-600 text-3xl font-bold mt-3">${p.aumento} <span class="text-base font-normal">de prejuízo efetivo (2000-2026)</span></p>
+            <p class="text-gray-600 mt-2">Você paga preço premium… e leva low-cost.</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filtrar() {
+      const valor = document.getElementById('filtro').value;
+      let filtrados = produtos;
+      if (valor !== 'todos') filtrados = produtos.filter(p => p.periodo >= valor);
+      renderizar(filtrados);
+    }
+
+    // Renderiza todos ao carregar
+    renderizar(produtos);
   </script>
 </body>
 </html>
